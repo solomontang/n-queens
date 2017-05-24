@@ -79,12 +79,31 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var row = this.get(rowIndex);
+      var wasFoundOnce = false;
+      
+      for (let pos = 0; pos < this.rows().length; pos++) {
+        if (row[pos] === 1 && wasFoundOnce) {
+          return true;
+        } else if (row[pos] === 1) {
+          wasFoundOnce = true;
+        }     
+      }
+      return false; 
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      // got the length of the matrix
+      var hasConflict = false;
+      // loop through all rows and call hasRowConflictAt(row);
+      for (let row = 0; row < this.rows().length; row++) {
+        if (this.hasRowConflictAt(row)) {
+          hasConflict = true;
+        }        
+      }
+
+      return hasConflict; 
     },
 
 
@@ -94,12 +113,33 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var wasFoundOnce = false;
+      var column = [];
+      //transpose row to column by colIndex
+      //loop through transposed row array similarly to hasRowConflicts
+      for (let row = 0; row < this.rows().length; row++) {
+        column.push(this.get(row)[colIndex]);
+      }
+      for (let pos = 0; pos < this.rows().length; pos++) {
+        if (column[pos] === 1 && wasFoundOnce) {
+          return true;
+        } else if (column[pos] === 1) {
+          wasFoundOnce = true;
+        }     
+      }
+      return false; 
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      //
+      var hasConflict = false;
+      for (let col = 0; col < this.rows().length; col++) {
+        if (this.hasColConflictAt(col)) {
+          hasConflict = true;
+        }
+      }
+      return hasConflict; // fixme
     },
 
 
