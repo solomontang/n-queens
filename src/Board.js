@@ -94,9 +94,9 @@
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      // got the length of the matrix
       var hasConflict = false;
-      // loop through all rows and call hasRowConflictAt(row);
+      // loop through all rows and call hasRowConflictAt(row);      
+
       for (let row = 0; row < this.rows().length; row++) {
         if (this.hasRowConflictAt(row)) {
           hasConflict = true;
@@ -104,6 +104,7 @@
       }
 
       return hasConflict; 
+
     },
 
 
@@ -114,20 +115,24 @@
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
       var wasFoundOnce = false;
-      var column = [];
-      //transpose row to column by colIndex
-      //loop through transposed row array similarly to hasRowConflicts
-      for (let row = 0; row < this.rows().length; row++) {
-        column.push(this.get(row)[colIndex]);
-      }
-      for (let pos = 0; pos < this.rows().length; pos++) {
-        if (column[pos] === 1 && wasFoundOnce) {
-          return true;
-        } else if (column[pos] === 1) {
-          wasFoundOnce = true;
-        }     
-      }
-      return false; 
+      var that = this;
+      var initial = [0, colIndex];
+      var length = this.rows().length;
+
+      var checkNextCol = function(row, col, repeatExists = false) {
+        if (row < length && col < length) {
+          if (that.rows()[row][col] === 1) {
+            if (wasFoundOnce) {
+              repeatExists = true;
+            }
+            wasFoundOnce = true;
+          }
+          repeatExists = checkNextCol(row + 1, col, repeatExists);
+        }
+        return repeatExists;
+      };
+
+      return checkNextCol(...initial);
     },
 
     // test if any columns on this board contain conflicts
