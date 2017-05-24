@@ -151,10 +151,11 @@
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       //debugger;
       var wasFoundOnce = false;
+      var length = this.rows().length;
       var that = this;
       var checkNextDiag = function(row, col, repeatExists = false) {
         //only execute when col and row are within array bounds
-        if (col < that.rows().length && row < that.rows().length) {
+        if (col < length && row < length) {
           if (that.rows()[row][col] === 1) {
             if (wasFoundOnce) {
               repeatExists = true;
@@ -195,13 +196,50 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    hasMinorDiagonalConflictAt: function(index) {
+      var initial = [];
+      var wasFoundOnce = false;
+      var length = this.rows().length;
+      var that = this;
+
+      // determine position outside
+      if (index < length - 1) {
+        initial = [0, index];
+      } else {
+        initial = [index - length + 1, length - 1];
+      }
+
+      var checkNextDiag = function(row, col, repeatExists = false) {
+        //first, check to see if its out of bounds
+        if (row < length && col < length) {
+          if (that.rows()[row][col] === 1) {
+            if (wasFoundOnce) {
+              repeatExists = true;
+            }
+            wasFoundOnce = true;
+          }
+          repeatExists = checkNextDiag(row + 1, col - 1, repeatExists);
+        }
+
+        return repeatExists;
+      };
+
+      return checkNextDiag(...initial);
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      // initialize hasconflict
+      var hasConflict = false;
+
+      var length = this.rows().length;
+      for (let pos = 0; pos < (length - 1) * 2; pos++) {
+        if (this.hasMinorDiagonalConflictAt(pos)) {
+          hasConflict = true;
+        }
+      }
+
+      return hasConflict;  
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
