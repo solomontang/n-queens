@@ -149,12 +149,44 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      //debugger;
+      var wasFoundOnce = false;
+      var that = this;
+      var checkNextDiag = function(row, col, repeatExists = false) {
+        //only execute when col and row are within array bounds
+        if (col < that.rows().length && row < that.rows().length) {
+          if (that.rows()[row][col] === 1) {
+            if (wasFoundOnce) {
+              repeatExists = true;
+            }
+            wasFoundOnce = true;
+          }
+          repeatExists = checkNextDiag(row + 1, col + 1, repeatExists);
+        }
+        return repeatExists;
+      };
+      //conditional to call checkNextDiag() in proper row/col
+      var initial = [];
+      if (majorDiagonalColumnIndexAtFirstRow >= 0) {
+        initial = [0, majorDiagonalColumnIndexAtFirstRow];
+      } else {
+        initial = [-majorDiagonalColumnIndexAtFirstRow, 0];
+      }
+      return checkNextDiag(...initial);
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      // set up hasConflict variable
+      var hasConflict = false;
+      // loop through all row indices except the last one
+      var length = this.rows().length;
+      for (let pos = -length; pos < length; pos++) {
+        if (this.hasMajorDiagonalConflictAt(pos)) {
+          hasConflict = true;
+        }
+      }
+      return hasConflict;     
     },
 
 
